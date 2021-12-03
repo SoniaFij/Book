@@ -1,6 +1,7 @@
 from flask import Flask
 from flask.wrappers import Request
 from flask import request
+from werkzeug.wrappers import response
 app = Flask(__name__)
 
 @app.route('/')
@@ -22,4 +23,20 @@ def context():
     return '<p>Your browser is {}</p>'.format(user_agent) """
 
 #URL: http://127.0.0.1:5000/context?var1=babcia_czeslawa&var2=tata
+
+
+@app.route('/browser')
+def browser():
+    user_agent = request.headers.get('User-Agent')
+    return '<p>Your browser is {}</p>'.format(user_agent)
+
+
+@app.route('/connection')
+def connection():
+    connection_type = request.headers.get('Connection')
+    return '<p>Browser connection type: {}</p>'.format(connection_type)
+
+
+
+
 
