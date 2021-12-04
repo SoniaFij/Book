@@ -37,6 +37,7 @@ def connection():
     return '<p>Browser connection type: {}</p>'.format(connection_type)
 
 
-
-
+@app.route('/bad_request')
+def bad_request():
+    return '<h1>Bad Request</h1>', 400
 
