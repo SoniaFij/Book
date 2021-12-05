@@ -1,4 +1,5 @@
 from flask import Flask
+from flask.helpers import make_response
 from flask.wrappers import Request
 from flask import request
 from werkzeug.wrappers import response
@@ -41,3 +42,11 @@ def connection():
 def bad_request():
     return '<h1>Bad Request</h1>', 400
 
+
+@app.route('/cookie')
+def cookie():
+    response = make_response('<h1>This document carries a cookie!</h>')
+    response.set_cookie('answer', '42')
+    return response
+
+    
