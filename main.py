@@ -1,7 +1,8 @@
 from flask import Flask
 from flask.helpers import make_response
+from flask.json import load
 from flask.wrappers import Request
-from flask import request
+from flask import request, redirect, abort, render_template
 from werkzeug.wrappers import response
 app = Flask(__name__)
 
@@ -38,10 +39,14 @@ def connection():
     return '<p>Browser connection type: {}</p>'.format(connection_type)
 
 
+#adding status code example
+
 @app.route('/bad_request')
 def bad_request():
     return '<h1>Bad Request</h1>', 400
 
+
+#response object in a view function example: adding cookie
 
 @app.route('/cookie')
 def cookie():
@@ -49,4 +54,32 @@ def cookie():
     response.set_cookie('answer', '42')
     return response
 
-    
+
+#redirect response example
+
+@app.route('/redirect')
+def redirect_example():
+    return redirect('https://www.google.pl')
+
+
+#special response: abort (error handling - returns status code 404 if the id dynamic argument
+#given in the URL does not represent a valid user)
+
+""" @app.route('/userid/<id>')
+def get_user(id):
+    user = load_user(id)
+    if not user:
+        abort(404)
+    return '<h1>Hello, {}</h1>'.format(user.name) """
+ 
+
+#adding jinja template
+
+@app.route('/jinja_example')
+def jinja_example():
+    return render_template('index.html')
+
+
+@app.route('/userjinja/<name>')
+def userjinja(name):
+    return render_template('user.html', name=name)
