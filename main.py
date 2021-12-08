@@ -12,8 +12,7 @@ bootstrap = Bootstrap(app)
 
 @app.route('/')
 def index():
-    return '<h1>Here we go again.</h1>'
-
+    return render_template('home.html')
 
 #dynamic route
 
