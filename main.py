@@ -4,7 +4,11 @@ from flask.json import load
 from flask.wrappers import Request
 from flask import request, redirect, abort, render_template
 from werkzeug.wrappers import response
+from flask_bootstrap import Bootstrap
+
+
 app = Flask(__name__)
+bootstrap = Bootstrap(app)
 
 @app.route('/')
 def index():
@@ -80,6 +84,9 @@ def jinja_example():
     return render_template('index.html')
 
 
-@app.route('/userjinja/<name>')
+@app.route('/user_jinja/<name>')
 def userjinja(name):
-    return render_template('user.html', name=name)
+    return render_template('user2.html', name=name)
+
+
+
