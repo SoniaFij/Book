@@ -17,7 +17,7 @@ def index():
 
 #dynamic route
 
-@app.route('/user/<name>')
+@app.route('/user_old/<name>')
 def user(name):
     return '<h1>Hello, {}!</h1>'.format(name)
 
@@ -84,7 +84,7 @@ def jinja_example():
     return render_template('index.html')
 
 
-@app.route('/user_jinja/<name>')
+@app.route('/user/<name>')
 def userjinja(name):
     return render_template('user2.html', name=name)
 
