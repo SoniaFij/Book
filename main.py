@@ -98,6 +98,6 @@ def internal_server_error(e):
     return render_template('500.html'), 500
 
 
-@app.route('/questions/<int:question_id>')    #int has been used as a filter that only integer will be passed in the url otherwise it will give a 404 error
-def find_question(question_id):  
-    return ('you asked for question{0}'.format(question_id))
+
+
+    
