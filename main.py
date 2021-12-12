@@ -5,10 +5,13 @@ from flask.wrappers import Request
 from flask import request, redirect, abort, render_template
 from werkzeug.wrappers import response
 from flask_bootstrap import Bootstrap
+from flask_moment import Moment
+from datetime import datetime
 
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
+moment = Moment(app)
 
 @app.route('/')
 def index():
@@ -96,6 +99,19 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
+
+
+@app.route('/sum/<int:first_int>/<int:second_int>')
+def sum(first_int, second_int):
+    sum = (first_int + second_int)
+    return '%d + %d = %d' % (first_int, second_int, sum)
+
+@app.route(('/sum_t/<int:first_int>/<int:second_int>'))
+def sum_t(first_int, second_int):
+    sum_t = first_int + second_int
+    return render_template('sum_t.html', first_int=first_int, second_int=second_int, sum_t = sum_t)
+
+
 
 
 

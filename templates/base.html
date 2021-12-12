@@ -2,10 +2,21 @@
 
 {% block title %}Flasky{% endblock %}
 
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{% endblock %}
+
+<style>
+    p { text-indent: 1000px; }
+</style>
+
+
 {% block head %}
 {{ super() }}
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 {% endblock %}
+
 
 
 {% block navbar %}
@@ -28,6 +39,7 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block content %}
@@ -35,3 +47,5 @@
 {% block page_content %}{% endblock %}
 </div>
 {% endblock %}
+
+
