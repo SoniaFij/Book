@@ -106,6 +106,7 @@ def sum(first_int, second_int):
     sum = (first_int + second_int)
     return '%d + %d = %d' % (first_int, second_int, sum)
 
+
 @app.route(('/sum_t/<int:first_int>/<int:second_int>'))
 def sum_t(first_int, second_int):
     sum_t = first_int + second_int
