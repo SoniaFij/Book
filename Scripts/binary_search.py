@@ -4,7 +4,7 @@ primes2 = [67]
 
 
 def find_middle_index(index_start, index_end):
-    middle_index = index_end-index_start/2
+    middle_index = (index_start+index_end)/2
     return int(middle_index)
 
 
@@ -17,7 +17,7 @@ def binary_search(data_set: list, x: int):
             if data_set[index_start] == x:
                 return "%d is the element of the list. Its index is %d." %(x,index_start)
             else:
-                return "%d is not an element of the list." %(x)
+                return "%d is not the element of the list." %(x)
         
         middle_index = find_middle_index(index_start, index_end)
 
