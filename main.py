@@ -113,6 +113,11 @@ def sum_t(first_int, second_int):
     return render_template('sum_t.html', first_int=first_int, second_int=second_int, sum_t = sum_t)
 
 
+@app.route('/time')
+def time():
+    return render_template('time.html', current_time = datetime.utcnow())
+
+
 
 
 
