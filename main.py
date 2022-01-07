@@ -2,14 +2,18 @@ from flask import Flask
 from flask.helpers import make_response
 from flask.json import load
 from flask.wrappers import Request
-from flask import request, redirect, abort, render_template
+from flask import request, redirect, abort, render_template, session, url_for
 from werkzeug.wrappers import response
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from datetime import datetime
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'kukabura'
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
@@ -118,7 +122,19 @@ def time():
     return render_template('time.html', current_time = datetime.utcnow())
 
 
+class NameForm(FlaskForm):
+    name = StringField('What is your name?', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
+
+
+@app.route('/form1', methods=['GET', 'POST'])
+def form1():
+    form = NameForm()
+    if form.validate_on_submit():
+        session['name'] = form.name.data
+        return redirect(url_for('form1'))
+    return render_template('form1.html', form=form, name=session.get('name'))
 
 
 
