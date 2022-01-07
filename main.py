@@ -2,7 +2,7 @@ from flask import Flask
 from flask.helpers import make_response
 from flask.json import load
 from flask.wrappers import Request
-from flask import request, redirect, abort, render_template, session, url_for
+from flask import request, redirect, abort, render_template, session, url_for, flash
 from werkzeug.wrappers import response
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
@@ -132,6 +132,9 @@ class NameForm(FlaskForm):
 def form1():
     form = NameForm()
     if form.validate_on_submit():
+        old_name = session.get('name')
+        if old_name is not None and old_name != form.name.data:
+            flash('Looks like you have changed your name!')
         session['name'] = form.name.data
         return redirect(url_for('form1'))
     return render_template('form1.html', form=form, name=session.get('name'))
