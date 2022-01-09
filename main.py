@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask.helpers import make_response
 from flask.json import load
@@ -12,10 +13,22 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
 
+from flask_sqlalchemy import SQLAlchemy
+
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 app.config['SECRET_KEY'] = 'kukabura'
+
 bootstrap = Bootstrap(app)
 moment = Moment(app)
+db = SQLAlchemy(app)
+
 
 @app.route('/')
 def index():
