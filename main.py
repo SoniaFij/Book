@@ -12,23 +12,73 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail
+from flask_mail import Message
+from threading import Thread
+from flask_migrate import Migrate
+
+
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
+
 app = Flask(__name__)
-app = Flask(__name__)
+
+
+#................................................................
+#APP CONFIGS
+
 app.config['SQLALCHEMY_DATABASE_URI'] =\
     'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-
 app.config['SECRET_KEY'] = 'kukabura'
+
+app.config['MAIL_SERVER'] = 'smtp.googleemail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config["MAIL_SUPPRESS_SEND"] = False
+
+app.config['BOOK_MAIL_SUBJECT+PREFIX'] = '[BOOK]'
+app.config['BOOK_MAIL_SENDER'] = 'Book Admin <zakothepapug@gmail.com>'
+
+app.config['BOOK_ADMIN'] = os.environ.get('BOOK_ADMIN')
+
+@app.route('/sendemail', methods=['GET', 'POST'])
+def sendemail():
+    form = NameForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.name.data).first()
+        if user is None:
+            user = User(username=form.name.data)
+            db.session.add(user)
+            session['known'] = False
+            if app.config['BOOK_ADMIN']:
+                send_email(app.config ['BOOK_ADMIN'], 'New User', 'mail/new_user', user=user)
+        else:
+            session['known'] = True
+        session['name'] = form.name.data
+        form.name.data = ''
+        return redirect(url_for('index'))
+    return render_template('index.html', form=form, name=session.get('name'), known=session.get('known', False))
+
 
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy(app)
+mail = Mail(app)
+migrate = Migrate(app, db)
+
+MAIL_DEBUG=True
+
+#................................................................
+#METHODS
+
+#SQlite 
 
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -49,10 +99,36 @@ class User(db.Model):
         return '<User %r>' % self.username
 
 
+#Name Form
+
+class NameForm(FlaskForm):
+    name = StringField('What is your name?', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
 @app.shell_context_processor
 def make_shell_context():
     return dict(db=db, USer=User, Role=Role)
 
+
+
+#sending mail with gmail - flask_mail email support
+
+def sned_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
+
+def send_email(to, subject, template, **kwargs):
+    msg = Message(app.config['BOOK_MAIL_SUBJECT_PREFIX'] + subject, sender=app.config['BOOK_MAIL_SENDER'], recipients=[to])
+    msg.bidy = render_template(template + '.txt', **kwargs)
+    msg.html = render_template(template + '.html', **kwargs)
+    thr = Thread(target=send_async_email, args=[app, msg])
+    thr.start()
+    return thr
+
+
+#................................................................
+#ROUTES
 
 @app.route('/')
 def index():
@@ -159,12 +235,6 @@ def time():
     return render_template('time.html', current_time = datetime.utcnow())
 
 
-class NameForm(FlaskForm):
-    name = StringField('What is your name?', validators=[DataRequired()])
-    submit = SubmitField('Submit')
-
-
-
 @app.route('/form1', methods=['GET', 'POST'])
 def form1():
     form = NameForm()
@@ -194,3 +264,4 @@ def sqlite():
             form.name.data = ''
         return redirect(url_for('index'))
     return render_template('index.html', form=form, name=session.get('name'), known=session.get('known', False))
+
